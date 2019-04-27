@@ -3,8 +3,10 @@
 #	To exit the virtual environment: deactivate
 
 # (1) https://docs.python.org/3/library/tkinter.html#the-window-manager
+# (2) https://www.geeksforgeeks.org/python-gui-tkinter/
 from __future__ import print_function
 import datetime
+import time
 import pickle
 import os.path
 
@@ -23,43 +25,85 @@ except ImportError:
 	flags = None
 
 SCOPES = ['https://www.googleapis.com/auth/calendar.readonly']
+file1 = open("SendFile.txt", "w+")
+print(file1)
 
 # --------------------------------------------------------------------
 # GUI
 class Application(tk.Frame):
 	def __init__(self, master = None):
+		global file1
 		super().__init__(master)
 		self.master = master
 		self.pack()
-		self.create_widgets()
-		self.results = tk.Label(self)
+		# self.create_widgets()
+		# self.results = tk.Label(self)
 
-	def create_widgets(self):
-		self.hi_there = tk.Button(self)
-		self.hi_there["text"] = "Hello World\n(click me)"
-		self.hi_there["command"] = self.say_hi
-		self.hi_there.pack(side="top")
+		tk.Label(self, text="First Name").grid(row=0)
+		tk.Label(self, text="Last Name").grid(row=1)
+		self.e1 = tk.Entry(self)
+		self.e2 = tk.Entry(self)
+		self.e1.grid(row=0, column=1)
+		self.e2.grid(row=1, column=1)
+		tk.Button(self, text='Quit', command=self.quit).grid(row=3, column=0, sticky='W', pady=4)
+		tk.Button(self, text='Show', command=self.show_entry_fields).grid(row=3, column=1, sticky='W', pady=4)
 
-		self.quit = tk.Button(self, text="QUIT", fg="red", command=self.master.destroy)
-		self.quit.pack(side="bottom")
 
-	def say_hi(self):
-		print("hi there, everyone!")
+		
 
-	def display_text(self, text):
-		self.results['text'] += text
-		self.results.pack(side="top")
+	# def create_widgets(self):
+	# 	self.hi_there = tk.Button(self)
+	# 	self.hi_there["text"] = "Hello World\n(click me)"
+	# 	self.hi_there["command"] = self.say_hi
+	# 	self.hi_there.pack(side="top")
 
-	def enter_text(self, text):
-		e = Entry(master)
-		e.pack()
-		e.focus_set()
+	# 	self.quit = tk.Button(self, text="QUIT", fg="red", command=self.master.destroy)
+	# 	self.quit.pack(side="bottom")
 
-	def callback(self):
-		print e.get()
+	# def say_hi(self):
+	# 	print("hi there, everyone!")
 
-	b.Button(master, text="get", width=10, command=callback)
-	b.pack()
+	# def display_text(self, text):
+	# 	self.results['text'] += text
+	# 	self.results.pack(side="top")
+
+	# def callback():
+	# 	print (self.e.get())
+
+	# def makeentry(self, parent, caption, width=None, **options):
+	# 	tk.Label(parent, text=caption).pack(side='left')
+	# 	entry = tk.Entry(parent, **options)
+	# 	if width:
+	# 		entry.config(width=width)
+	# 	entry.pack(side='left')
+	# 	return entry
+
+	def show_entry_fields(self):
+		print("First Name: %s\nLast Name: %s" %(self.e1.get(), self.e2.get()))
+		file1.write(self.e1.get() + self.e2.get() + '\n')
+		file1.flush()
+
+
+	# def enter_text(self):
+	# 	tk.Label(self, text='Task: ').grid(row=0)
+	# 	self.e = tk.Entry(self)
+	# 	self.e.grid(row=0, column = 1)
+	# 	# self.e.pack()
+	# 	# self.e.focus_set()
+
+	# 	self.b = tk.Button(self, text="Get", width=25, command=self.callback)
+	# 	self.b.pack()
+	# 	self.text = self.e.get()
+
+	# 	self.user = self.makeentry(self, "User name:", 10)
+	# 	self.password = self.makeentry(self, "Password:", 10, show="*")
+
+	# 	self.content = tk.StringVar()
+	# 	self.entry = tk.Entry(self, text='Wheee', textvariable=self.content)
+
+	# 	self.text = self.content.get()
+	# 	self.content.set('Wheee')
+
 
 # -------------------------------------------------------------------
 # Deals with Google Calendar Information
@@ -95,10 +139,12 @@ class Gstuff:
 		events = events_result.get('items', [])
 		return events
 
+# -------------------------------------------------------------------
 def main():
-	# Sets up the GUI
+		# Sets up the GUI
 	root = tk.Tk()
 	app = Application(master=root)
+	global file1
 	# (1)
 	app.master.title("Print the next ten events")	# Sets the Window Title
 
@@ -108,9 +154,17 @@ def main():
 
 	for event in events:
 		start = event['start'].get('dateTime', event['start'].get('date'))
-		print(start, event['summary'])
-		app.display_text(event['summary']+'\n')
-
+		end = event['end'].get('dateTime', event['end'].get('date'))
+		yeet = start + '\t' + end + '\t' + event['summary']+'\n'
+		print(yeet)
+		# app.display_text(yeet)
+		file1.write(yeet)
+		file1.flush()
+	time.sleep(1)
+	print("rawwwwwwwwww")
+	time.sleep(1)
+	# file1.close()
+	# app.enter_text()
 	app.mainloop()
 
 if __name__ == '__main__':
