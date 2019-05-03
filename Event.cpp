@@ -19,11 +19,11 @@ public:
 	//currently assumes all information available
 	Event(string s)
 	{
-		name = readName(s);
-		date = readDate(s);			
-		start = readTime(s.substr(11, 8));					
-		end = readTime(s.substr(37, 8));		
-		//still need to add tags			
+		setDate(readDate(s));			
+		setStart(readTime(s.substr(11, 8)));					
+		setEnd(readTime(s.substr(37, 8)));					
+		setName(readName(s));		
+		setTags(readTags(s));			
 	}
 
 	//copy constructor
@@ -32,7 +32,7 @@ public:
 		name = t.getName();
 		tags = t.getTags();
 		date = t.getDate();						
-		start = t.getStart();					//change dep on algorithm
+		start = t.getStart();				//change dep on algorithm
 		end = t.getEnd();					//change dep on algorithm
 	}
 
@@ -70,13 +70,15 @@ public:
 		
 		while(t[i] != '\0')
 		{
-			while(t[i] == ' ')					//skips spaces
+			while(t[i] == ' ')					//skips unnecess
+
+				ary spaces
 			{
 				i++; 
 			}
 			while(t[i] != ',')					//find tag
 			{
-				temp[j] = t[i];
+				temp[j] += t[i];
 				i++;
 				j++;
 			}
@@ -100,8 +102,6 @@ public:
 	{
 		end = e;
 	}
-
-	
 };
 
 

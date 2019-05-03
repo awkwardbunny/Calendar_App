@@ -40,25 +40,23 @@ int readTime(string s)
 string readName(string s)
 {
 	string temp = "";
-	int i = s.length() -1;
+	int i = s.length() - 1;
 	while(s[i] != '\t')
 	{
-		s = s[i] + s;
+		i++;
 	}
-	return s;
+	i++;	
+	while(s[i] != '\t')
+	{
+		temp += s[i];
+	}
+	return temp;
 }
-//parses string from input.txt
-Event:Event parse(string s)
+
+string readTags(string s)
 {
-	Event e;
+	int i = s.length() - 1;
 
-	e.setDate(readDate(s));			
-	
-	e.setStart(readTime(s.substr(11, 8)));					
-	
-	e.setEnd(readTime(s.substr(37, 8)));					
-
-	e.setName(readName(s));						
 }
 
 //concatenates int into ##:##:##
