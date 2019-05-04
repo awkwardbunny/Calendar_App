@@ -3,8 +3,9 @@ import tkinter as tk
 import pickle
 import os.path
 import time, datetime
+import csv
 
-from apiclient.discovery import build
+from googleapiclient.discovery import build
 from google_auth_oauthlib.flow import InstalledAppFlow
 from google.auth.transport.requests import Request
 from httplib2 import Http
@@ -35,15 +36,24 @@ class GCal:
         self.service = build('calendar', 'v3', credentials=creds)
 
     def fetch_events(self, n):
+        page_token = None
+        id = 'primary'      # defaults to primary calendar
+        calendar_list = self.service.calendarList().list(pageToken=page_token).execute()
+        for calendar_list_entry in calendar_list['items']:
+            # print(calendar_list_entry['summary'])
+            if calendar_list_entry['summary'] == "2019 Spring":     # retrieves the ID of the calendar
+                id = calendar_list_entry['id']
+
         now = datetime.datetime.utcnow().isoformat() + 'Z'
         print("Fetching {} events.".format(n))
         events_result = self.service.events().list(
-            calendarId='primary',
+            calendarId=id,
             timeMin = now,
             maxResults = n,
             singleEvents = True,
             orderBy = 'startTime'
         ).execute()
+
         return events_result.get('items', [])
 
 class Window(tk.Frame):
@@ -75,22 +85,27 @@ class Window(tk.Frame):
         self.columnconfigure(1, weight=3)
         self.rowconfigure(0, weight=1)
 
+        # ++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
         # Start adding components
+        # ---------------------------------------------------------------------------
         # Right side - Today tasks
         l_today = tk.Label(fr_today, text='Today')
         l_today.pack(side='top', fill=tk.X)
 
         scrollbar = tk.Scrollbar(fr_today)
         scrollbar.pack(side='right', fill=tk.Y)
-        lb_tasks = tk.Listbox(fr_today, yscrollcommand=scrollbar.set)
-        lb_tasks.pack(side='bottom', fill=tk.BOTH, expand=True)
 
+        self.lb_tasks = tk.Listbox(fr_today, yscrollcommand=scrollbar.set)
+        self.lb_tasks.pack(side='bottom', fill=tk.BOTH, expand=True)
+        # ---------------------------------------------------------------------------
         # Left side - Tasks list
+
         scrollbar = tk.Scrollbar(fr_tasks_list)
         scrollbar.pack(side='right', fill='y')
+
         self.lb_tasks = tk.Listbox(fr_tasks_list, yscrollcommand=scrollbar.set)
         self.lb_tasks.pack(fill=tk.BOTH, expand=True)
-
+        # ---------------------------------------------------------------------------
         # Entry form
         fr_form.columnconfigure(1, weight=1)
         tk.Label(fr_form, text='TASK').grid(row=0, sticky=tk.W+tk.E)
@@ -110,11 +125,11 @@ class Window(tk.Frame):
         self.e_end_time.grid(row=3, column=1, sticky=tk.W+tk.E)
 
         tk.Button(fr_form, text='OK', command=self.create_event).grid(row=4, sticky=tk.W+tk.E)
-
+        # ---------------------------------------------------------------------------
         # Google Calendar object
         self.g = GCal()
         self.g.check_token_existance()
-        self.add_events(self.g.fetch_events(10))
+        self.add_events(self.g.fetch_events(20))
 
     def add_events(self, events):
         for e in events:
@@ -130,11 +145,14 @@ class Window(tk.Frame):
         s_st_time = self.e_st_time.get()
         s_end_time = self.e_end_time.get()
         print("Creating a new task '{}' with tags '{}'\nStart: {}\nEnd: {}".format(s_task, s_tags, s_st_time, s_end_time))
+        #self.lb_tasks.insert(tk.END, s_task + "\t" + s_tags)
+        self.lb_tasks.insert(tk.END, '{} (Tag: {}) '.format(s_task, s_tags))
+
 
 def main():
     root = tk.Tk()
-    root.geometry("700x600")
-    root.title("Window")
+    root.geometry("00x600")
+    root.title("Calendar App")
     app = Window(root)
 
     root.mainloop()
