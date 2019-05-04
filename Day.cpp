@@ -1,13 +1,13 @@
 #include <iostream>
 #include <string>
 #include <vector>
-#include "constants.hpp"
-#include "Task.cpp"
+#include "Event.cpp"
 
 class Day
 {
 	int date;						//YYMMDD
-	std :: vector <Task> tasks;		
+	vector <Event> events;
+	vector <Reminder> reminders		
 
 public:
 	//constructor
@@ -22,16 +22,22 @@ public:
 	//destructor
 	~Day(){}
 
-	//get function
-	vector <Task> getTasks()
+	//returns formatted day schedule
+	string getSched()
 	{
-		return tasks;
+		string sched = "";
+		for (auto it=intVector.begin(); it!=intVector.end(); ++it)
+    	{
+        	string += it->getInfo() + '\n';
+    	}
 	}
 
-	//set function
-	void setTasks()
+	//determines reminder or Event, adds to appropriate vector
+	void add(string s)
 	{
-		//not sure what should go here
-		//what are we allowing? copying a task? automatic add task identified by task tags?
+		if(s.find("#event"))
+		{
+			events.push_back()
+		}
 	}
 };
