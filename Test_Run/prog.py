@@ -167,11 +167,12 @@ class Window(tk.Frame):
             start = e['start'].get('dateTime', e['start'].get('date'))
             end = e['end'].get('dateTime', e['end'].get('date'))
             s = start + '\t' + end + '\t' + e['summary']
-            # print(s)
+            print(s)
             # Format is XXXX-XX-XX (Year-Month-Day)
             if start[0:10] == '2019-05-08': # self.new_today[0:10]:
                 self.lb_today.insert(tk.END, self.get_start_time2(s) + ' - ' + self.get_end_time2(s) + ': ' + e['summary'])
                 self.write_file.write(s + '\n')
+                self.write_file.flush()
 
     def create_event(self):     # from User Input
         s_type = self.type_input.get()
@@ -212,16 +213,15 @@ class Window(tk.Frame):
                     self.lb_tasks.insert(tk.END, '{}: {} (Tag: {})'.format(s_type, s_task, s_tags))
                     self.send_line = self.default_today + '\t' + self.default_today + '\t' + '{}\t(Tag: {}) \n'.format(s_task, s_tags)
         self.write_file.write(self.send_line)
+        self.write_file.flush()
         self.clear_text()
 
     def update_event(self):
         __location__ = os.path.realpath(os.path.join(os.getcwd(), os.path.dirname(__file__)))
         # f = open(os.path.join(__location__, 'Makefile'))
-        print(__location__)
-        os.system("ls")
+        #print(__location__)
+        #os.system("ls")
         # HELP HELP HELP
-        os.system('make all')
-        #
         os.system('make run')
         #
         # os.system('make clean')
@@ -230,11 +230,12 @@ class Window(tk.Frame):
         self.delete_event()
         temp = read_file.readlines()
         for x in temp:
-            start_time = self.get_start_time2(x)
-            end_time = self.get_end_time2(x)
-            event_name = self.get_event_name(x)
-            returnable = start_time + ' - ' + end_time + ': ' + event_name
-            self.lb_today.insert(tk.END, returnable)
+            if(len(x) != 1):
+                start_time = self.get_start_time2(x)
+                end_time = self.get_end_time2(x)
+                event_name = self.get_event_name(x)
+                returnable = start_time + ' - ' + end_time + ': ' + event_name
+                self.lb_today.insert(tk.END, returnable)
 
     def delete_event(self):
         for i in range(self.lb_today.size()):
