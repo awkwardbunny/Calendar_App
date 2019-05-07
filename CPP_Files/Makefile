@@ -1,26 +1,24 @@
 .PHONY: clean debug run
 
 CXX = g++
-CXXFLAGS = -I. #-std=c++11 -g #optional flags
+CXXFLAGS = -g -I./inc #-std=c++11 -g #optional flags
 LDFLAGS =
 
-SOURCES = main.cpp Calendar.cpp Day.cpp Reminder.cpp Event.cpp formFunc.cpp #put filenames here
-OBJECTS = $(SOURCES:.cpp=.o)
+SRC=$(wildcard src/*.cpp)
+OBJ = $(SRC:.cpp=.o)
+
+#$(info $$SRC is [${SRC}])
+#$(info $$OBJ is [${OBJ}])
+
 EXECUTABLE = main
 
-all: $(SOURCES) $(EXECUTABLE)
+all: $(EXECUTABLE)
 
-$(EXECUTABLE): $(OBJECTS)
-	$(CXX) $(CXXFLAGS) -o $@ $(OBJECTS) $(LDFLAGS)
-
-.cpp.o:
-	$(CXX) $(CXXFLAGS) -c $<
+$(EXECUTABLE): $(OBJ))
+	$(CXX) $(CXX_FLAGS) -o $@ $(OBJECTS) $(LDFLAGS)
 
 clean:
-	rm -rf $(EXECUTABLE) $(OBJECTS) debug.exe *.stackdump *~ *.dSYM/
-
-debug:
-	$(CXX) $(CXXFLAGS) -g -o debug.exe $(SOURCES)
+	rm -rf $(EXECUTABLE) $(OBJECTS)
 
 run:
 	./$(EXECUTABLE)

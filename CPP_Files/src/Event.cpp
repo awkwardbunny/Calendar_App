@@ -1,6 +1,6 @@
 //Class Event
 
-#include "Event.hpp"
+#include <Event.hpp>
 
 Event::Event(string s) : Reminder(s, "event")
 {

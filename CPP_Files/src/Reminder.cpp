@@ -1,6 +1,6 @@
 //Class Reminder
 
-#include "Reminder.hpp"
+#include <Reminder.hpp>
 
 //constructor, takes in file line
 //currently assumes all information available
