@@ -14,11 +14,11 @@ EXECUTABLE = main
 
 all: $(EXECUTABLE)
 
-$(EXECUTABLE): $(OBJ))
-	$(CXX) $(CXX_FLAGS) -o $@ $(OBJECTS) $(LDFLAGS)
+$(EXECUTABLE): $(OBJ)
+	$(CXX) $(CXX_FLAGS) -o $@ $(OBJ) $(LDFLAGS)
 
 clean:
-	rm -rf $(EXECUTABLE) $(OBJECTS)
+	rm -rf $(EXECUTABLE) $(OBJ)
 
 run:
 	./$(EXECUTABLE)
