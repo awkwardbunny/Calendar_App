@@ -176,7 +176,7 @@ class Window(tk.Frame):
         s_end_time = self.e_end_time.get()
         self.send_line = ""
         if s_type == "Event":
-            s_tags = "#Event " + self.e_tags.get()
+            s_tags = "#event " + self.e_tags.get()
             if s_st_time != "":
                 if s_end_time != "":
                     self.lb_tasks.insert(tk.END, '{}: {} (Tag: {}) Start time: {}   End time: {}'.format(s_type, s_task, s_tags, s_st_time, s_end_time))
@@ -192,7 +192,7 @@ class Window(tk.Frame):
                     self.lb_tasks.insert(tk.END, '{}: {} (Tag: {})'.format(s_type, s_task, s_tags))
                     self.send_line = self.new_today + '\t' + self.new_today + '\t' + '{} (Tag: {}) \n'.format(s_task, s_tags)
         else:
-            s_tags = "#Reminder " + self.e_tags.get()
+            s_tags = "#reminder " + self.e_tags.get()
             if s_st_time != "":
                 if s_end_time != "":
                     self.lb_tasks.insert(tk.END, '{}: {} (Tag: {}) Start time: {}   End time: {}'.format(s_type, s_task, s_tags, s_st_time, s_end_time))
@@ -208,6 +208,7 @@ class Window(tk.Frame):
                     self.lb_tasks.insert(tk.END, '{}: {} (Tag: {})'.format(s_type, s_task, s_tags))
                     self.send_line = self.new_today + '\t' + self.new_today + '\t' + '{} (Tag: {}) \n'.format(s_task, s_tags)
         self.write_file.write(self.send_line)
+        self.clear_text()
 
     def update_event(self):
         read_file = open("file2.txt", "r")
@@ -235,14 +236,15 @@ class Window(tk.Frame):
     def get_event_name(self, time_string):
         return time_string[52:len(time_string)-1]
 
-    def file_length(self, fname):
-        with open(fname) as f:
-            for i, l in enumerate(f):
-                pass
-        return i + 1
-
     def time_template(self, time_string):
         return self.today.strftime("%Y-%m-%dT" + time_string + ":00-04:00")
+
+    def clear_text(self):
+        self.type_input.set("")
+        self.e_task_name.delete(0, 'end')
+        self.e_tags.delete(0, 'end')
+        self.e_st_time.delete(0, 'end')
+        self.e_end_time.delete(0, 'end')
 
 def main():
     root = tk.Tk()
