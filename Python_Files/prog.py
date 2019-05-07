@@ -12,6 +12,9 @@ from google.auth.transport.requests import Request
 from httplib2 import Http
 from oauth2client import file, client, tools
 
+default_font = "Times 16"
+secondary_font = "Times 14"
+
 class GCal:
 
     fn_pickle = 'token.pickle'
@@ -42,13 +45,12 @@ class GCal:
         calendar_list = self.service.calendarList().list(pageToken=page_token).execute()
         for calendar_list_entry in calendar_list['items']:
             # print(calendar_list_entry['summary'])
-            if calendar_list_entry['summary'] == "2019 Springf":     # retrieves the ID of the calendar
+            if calendar_list_entry['summary'] == "TestDev1":     # retrieves the ID of the calendar
                 id = calendar_list_entry['id']
-            else:
-                id = "primary"
+                # print(calendar_list_entry['summary'])
 
         now = datetime.datetime.utcnow().isoformat() + 'Z'
-        print("Fetching {} events.".format(n))
+        # print("Fetching {} events.".format(n))
         events_result = self.service.events().list(
             calendarId=id,
             timeMin = now,
@@ -73,7 +75,7 @@ class Window(tk.Frame):
         self.new_today = self.today.strftime("%Y-%m-%dT00:00:00-04:00")
 
         # Create text file
-        self.write_file = open("file.txt", "w+")
+        self.write_file = open("file1.txt", "w+")
 
         # Set up all frames
         fr_tasks = tk.Frame(self)
@@ -91,83 +93,156 @@ class Window(tk.Frame):
         fr_tasks_list = tk.Frame(fr_tasks)
         fr_tasks_list.grid(padx=5, pady=5, row=0, column=0, sticky=tk.N+tk.S+tk.E+tk.W)
 
+        fr_notes = tk.Frame(self)
+        fr_notes.grid(padx=5, pady=5, row=1, sticky=tk.N+tk.S+tk.E+tk.W)
+
         self.columnconfigure(0, weight=5)
         self.columnconfigure(1, weight=3)
         self.rowconfigure(0, weight=1)
 
         # ---------------------------------------------------------------------------
         # Right side - Today tasks
-        l_today = tk.Label(fr_today, text='Today')
+        l_today = tk.Label(fr_today, text='Today', font=default_font)
         l_today.pack(side='top', fill=tk.X)
 
         scrollbar = tk.Scrollbar(fr_today)
         scrollbar.pack(side='right', fill='y')
 
-        self.lb_today = tk.Listbox(fr_today, yscrollcommand=scrollbar.set)
+        self.lb_today = tk.Listbox(fr_today, yscrollcommand=scrollbar.set, font=secondary_font)
         self.lb_today.pack(fill=tk.BOTH, expand=True)
 
         # ---------------------------------------------------------------------------
         # Left side - Tasks list
-        l_tasks_list = tk.Label(fr_tasks_list, text='Tasks')
+        l_tasks_list = tk.Label(fr_tasks_list, text='Tasks', font=default_font)
         l_tasks_list.pack(side='top', fill=tk.X)
 
         scrollbar = tk.Scrollbar(fr_tasks_list)
         scrollbar.pack(side='right', fill='y')
 
-        self.lb_tasks = tk.Listbox(fr_tasks_list, yscrollcommand=scrollbar.set)
+        self.lb_tasks = tk.Listbox(fr_tasks_list, yscrollcommand=scrollbar.set, font=secondary_font)
         self.lb_tasks.pack(fill=tk.BOTH, expand=True)
 
         # ---------------------------------------------------------------------------
         # Entry form
         fr_form.columnconfigure(1, weight=1)
-        tk.Label(fr_form, text='TASK').grid(row=0, sticky=tk.W+tk.E)
+
+        tk.Label(fr_form, text='TYPE*', font=default_font).grid(row=0, sticky=tk.W+tk.E)
+        self.type_input = tk.StringVar(self)
+        self.type_input.set("")
+        self.om_type = tk.OptionMenu(fr_form, self.type_input, "Event", "Reminder")
+        self.om_type.grid(row=0, column=1, sticky=tk.W+tk.E)
+
+        tk.Label(fr_form, text='TASK*', font=default_font).grid(row=1, sticky=tk.W+tk.E)
         self.e_task_name = tk.Entry(fr_form)
-        self.e_task_name.grid(row=0, column=1, sticky=tk.W+tk.E)
+        self.e_task_name.grid(row=1, column=1, sticky=tk.W+tk.E)
 
-        tk.Label(fr_form, text='TAGS').grid(row=1, sticky=tk.W+tk.E)
+        tk.Label(fr_form, text='TAGS*', font=default_font).grid(row=2, sticky=tk.W+tk.E)
         self.e_tags = tk.Entry(fr_form)
-        self.e_tags.grid(row=1, column=1, sticky=tk.W+tk.E)
+        self.e_tags.grid(row=2, column=1, sticky=tk.W+tk.E)
 
-        tk.Label(fr_form, text='START').grid(row=2, sticky=tk.W+tk.E)
+        tk.Label(fr_form, text='START', font=default_font).grid(row=3, sticky=tk.W+tk.E)
         self.e_st_time = tk.Entry(fr_form)
-        self.e_st_time.grid(row=2, column=1, sticky=tk.W+tk.E)
+        self.e_st_time.grid(row=3, column=1, sticky=tk.W+tk.E)
 
-        tk.Label(fr_form, text='END').grid(row=3, sticky=tk.W+tk.E)
+        tk.Label(fr_form, text='END', font=default_font).grid(row=4, sticky=tk.W+tk.E)
         self.e_end_time = tk.Entry(fr_form)
-        self.e_end_time.grid(row=3, column=1, sticky=tk.W+tk.E)
+        self.e_end_time.grid(row=4, column=1, sticky=tk.W+tk.E)
 
-        tk.Button(fr_form, text='OK', command=self.create_event).grid(row=4, sticky=tk.W)
-        tk.Button(fr_form, text='Refresh', command=self.update_event).grid(row = 4, column = 1, sticky=tk.E)
+        tk.Button(fr_form, text='OK', command=self.create_event, font=default_font).grid(row=5, sticky=tk.W)
+        tk.Button(fr_form, text='Refresh', command=self.update_event, font=default_font).grid(row=5, column=1, sticky=tk.E)
+
+        tk.Label(fr_notes, text='Please note: ', font=default_font).grid(row=0, column=0, sticky=tk.W)
+
         # ---------------------------------------------------------------------------
         # Google Calendar object
         self.g = GCal()
         self.g.check_token_existance()
         self.add_events(self.g.fetch_events(20))
 
-    def add_events(self, events):
+    def add_events(self, events):       # from Google Calendar
         for e in events:
             start = e['start'].get('dateTime', e['start'].get('date'))
-            end = e['start'].get('dateTime', e['end'].get('date'))
+            end = e['end'].get('dateTime', e['end'].get('date'))
             s = start + '\t' + end + '\t' + e['summary']
-            print(s)
+            # print(s)
             if start[0:10] == self.new_today[0:10]:
                 self.lb_today.insert(tk.END, e['summary'])
                 self.write_file.write(s + '\n')
 
-    def create_event(self):
+    def create_event(self):     # from User Input
+        s_type = self.type_input.get()
         s_task = self.e_task_name.get()
-        s_tags = self.e_tags.get()
         s_st_time = self.e_st_time.get()
         s_end_time = self.e_end_time.get()
-
-        print("Creating a new task '{}' with tags '{}'\nStart: {}\nEnd: {}".format(s_task, s_tags, s_st_time, s_end_time))
-        self.lb_tasks.insert(tk.END, '{} (Tag: {}) '.format(s_task, s_tags))
-        send_line = self.new_today + '\t' + self.new_today + '\t' + '{} (Tag: {}) \n'.format(s_task, s_tags)
-        self.write_file.write(send_line)
+        self.send_line = ""
+        if s_type == "Event":
+            s_tags = "#Event " + self.e_tags.get()
+            if s_st_time != "":
+                if s_end_time != "":
+                    self.lb_tasks.insert(tk.END, '{}: {} (Tag: {}) Start time: {}   End time: {}'.format(s_type, s_task, s_tags, s_st_time, s_end_time))
+                    self.send_line = self.time_template(s_st_time) + '\t' + self.time_template(s_end_time) + '\t' + '{} (Tag: {}) \n'.format(s_task, s_tags)
+                else:
+                    self.lb_tasks.insert(tk.END, '{}: {} (Tag: {}) Start time: {}'.format(s_type, s_task, s_tags, s_st_time))
+                    self.send_line = self.time_template(s_st_time) + '\t' + self.new_today + '\t' + '{} (Tag: {}) \n'.format(s_task, s_tags)
+            else:
+                if s_end_time != "":
+                    self.lb_tasks.insert(tk.END, '{}: {} (Tag: {}) End time: {}'.format(s_type, s_task, s_tags, s_end_time))
+                    self.send_line = self.new_today + '\t' + self.time_template(s_end_time) + '\t' + '{} (Tag: {}) \n'.format(s_task, s_tags)
+                else:
+                    self.lb_tasks.insert(tk.END, '{}: {} (Tag: {})'.format(s_type, s_task, s_tags))
+                    self.send_line = self.new_today + '\t' + self.new_today + '\t' + '{} (Tag: {}) \n'.format(s_task, s_tags)
+        else:
+            s_tags = "#Reminder " + self.e_tags.get()
+            if s_st_time != "":
+                if s_end_time != "":
+                    self.lb_tasks.insert(tk.END, '{}: {} (Tag: {}) Start time: {}   End time: {}'.format(s_type, s_task, s_tags, s_st_time, s_end_time))
+                    self.send_line = self.time_template(s_st_time) + '\t' + self.time_template(s_end_time) + '\t' + '{} (Tag: {}) \n'.format(s_task, s_tags)
+                else:
+                    self.lb_tasks.insert(tk.END, '{}: {} (Tag: {}) Start time: {}'.format(s_type, s_task, s_tags, s_st_time))
+                    self.send_line = self.time_template(s_st_time) + '\t' + self.new_today + '\t' + '{} (Tag: {}) \n'.format(s_task, s_tags)
+            else:
+                if s_end_time != "":
+                    self.lb_tasks.insert(tk.END, '{}: {} (Tag: {}) End time: {}'.format(s_type, s_task, s_tags, s_end_time))
+                    self.send_line = self.new_today + '\t' + self.time_template(s_end_time) + '\t' + '{} (Tag: {}) \n'.format(s_task, s_tags)
+                else:
+                    self.lb_tasks.insert(tk.END, '{}: {} (Tag: {})'.format(s_type, s_task, s_tags))
+                    self.send_line = self.new_today + '\t' + self.new_today + '\t' + '{} (Tag: {}) \n'.format(s_task, s_tags)
+        self.write_file.write(self.send_line)
 
     def update_event(self):
-        print("Do something")
+        read_file = open("file2.txt", "r")
+        self.delete_event()
+        temp = read_file.readlines()
+        for x in temp:
+            start_time = self.get_start_time(x)
+            end_time = self.get_end_time(x)
+            event_name = self.get_event_name(x)
+            returnable = event_name + '\n' + start_time + '\n' + end_time
+            self.lb_today.insert(tk.END, returnable)
+        # print("Do something 1")
 
+    def delete_event(self):
+        for i in range(self.lb_today.size()):
+            # print(i)
+            self.lb_today.delete(0)
+
+    def get_start_time(self, time_string):
+        return time_string[11:19]
+
+    def get_end_time(self, time_string):
+        return time_string[37:45]
+
+    def get_event_name(self, time_string):
+        return time_string[52:len(time_string)-1]
+
+    def file_length(self, fname):
+        with open(fname) as f:
+            for i, l in enumerate(f):
+                pass
+        return i + 1
+
+    def time_template(self, time_string):
+        return self.today.strftime("%Y-%m-%dT" + time_string + ":00-04:00")
 
 def main():
     root = tk.Tk()
