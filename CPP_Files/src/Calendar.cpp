@@ -33,7 +33,7 @@ void Calendar::readInput()
 
 void Calendar::writeOutput()
 {
-	ofstream myfile ("output.txt");
+	ofstream myfile ("file2.txt");
 	if(myfile.is_open())						//checks file open
 	{
 		for (auto it=dayMap.begin(); it!=dayMap.end(); ++it)
