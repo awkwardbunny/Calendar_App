@@ -7,14 +7,13 @@ using namespace std;
 //reads the date that the file represents
 int readDate(string s)
 {
-	string temp = "";						//init and declare helper vars
+	//cout << "IN readDate(): Input is " << s << endl;
+	string temp = ""; //init and declare helper vars
 	int i = 0;
 
-	while(s[i] != 'T')						//iterates through date 
-	{
-		if(s[i] != '-')						//ignores dashes
-		{
-			temp += s[i];					//stores date YYYYMMDD
+	while(i < 10){ //iterates through date 
+		if(s[i] != '-'){ //ignores dashes
+			temp += s[i]; //stores date YYYYMMDD
 		}
 		i++;
 	}
@@ -52,7 +51,7 @@ string readTags(string s)
 	int i = s.length() - 1;
 	while(s[i] != '#')
 	{
-		temp = s[i] + temp;
+		temp = s[i--] + temp;
 	}
 	return temp;
 }

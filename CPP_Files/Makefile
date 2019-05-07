@@ -20,5 +20,5 @@ $(EXECUTABLE): $(OBJ)
 clean:
 	rm -rf $(EXECUTABLE) $(OBJ)
 
-run:
+run: $(EXECUTABLE)
 	./$(EXECUTABLE)

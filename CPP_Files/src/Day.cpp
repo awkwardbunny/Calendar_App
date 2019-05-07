@@ -4,7 +4,6 @@
 
 using namespace std;
 
-
 Day::Day(string s)
 {
 	dayDate = readDate(s);
@@ -33,12 +32,14 @@ void Day::add(string s)
 {
 	if(readTags(s).find("event"))
 	{
-		Event e(s);
-		events.push_back(e);
+		cout << "Found event" << endl;
+		//Event e(s);
+		//events.push_back(e);
 	}
 	else if(readTags(s).find("reminder"))
 	{
-		Reminder r(s, s); // TODO Fix
-		reminders.push_back(r);
+		cout << "Found reminder" << endl;
+		//Reminder r(s, "reminder"); // TODO Fix
+		//reminders.push_back(r);
 	}
 }
