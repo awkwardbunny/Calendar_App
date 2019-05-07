@@ -1,7 +1,7 @@
 .PHONY: clean debug run
 
 CXX = g++
-CXXFLAGS = -g -I./inc #-std=c++11 -g #optional flags
+CXXFLAGS = -g -I./inc -std=c++11 -g #optional flags
 LDFLAGS =
 
 SRC=$(wildcard src/*.cpp)

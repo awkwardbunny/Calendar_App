@@ -219,8 +219,13 @@ class Window(tk.Frame):
         # f = open(os.path.join(__location__, 'Makefile'))
         print(__location__)
         os.system("ls")
-        os.system("ake all")
-        os.system("make run")
+        # HELP HELP HELP
+        os.system('make all')
+        #
+        os.system('make run')
+        #
+        # os.system('make clean')
+
         read_file = open("file2.txt", "r")
         self.delete_event()
         temp = read_file.readlines()
