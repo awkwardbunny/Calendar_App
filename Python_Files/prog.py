@@ -2,6 +2,7 @@
 import tkinter as tk
 import pickle
 import os.path
+import os
 import time, datetime
 import csv
 
@@ -73,6 +74,7 @@ class Window(tk.Frame):
         # Find today's date
         self.today = date.today()
         self.new_today = self.today.strftime("%Y-%m-%dT00:00:00-04:00")
+        self.default_today = self.today.strftime("%Y-%m-%dT88:88:88-04:00")
 
         # Create text file
         self.write_file = open("file1.txt", "w+")
@@ -133,26 +135,26 @@ class Window(tk.Frame):
         self.om_type.grid(row=0, column=1, sticky=tk.W+tk.E)
 
         tk.Label(fr_form, text='TASK*', font=default_font).grid(row=1, sticky=tk.W+tk.E)
-        self.e_task_name = tk.Entry(fr_form)
+        self.e_task_name = tk.Entry(fr_form, font=default_font)
         self.e_task_name.grid(row=1, column=1, sticky=tk.W+tk.E)
 
         tk.Label(fr_form, text='TAGS*', font=default_font).grid(row=2, sticky=tk.W+tk.E)
-        self.e_tags = tk.Entry(fr_form)
+        self.e_tags = tk.Entry(fr_form, font=default_font)
         self.e_tags.grid(row=2, column=1, sticky=tk.W+tk.E)
 
         tk.Label(fr_form, text='START', font=default_font).grid(row=3, sticky=tk.W+tk.E)
-        self.e_st_time = tk.Entry(fr_form)
+        self.e_st_time = tk.Entry(fr_form, font=default_font)
         self.e_st_time.grid(row=3, column=1, sticky=tk.W+tk.E)
 
         tk.Label(fr_form, text='END', font=default_font).grid(row=4, sticky=tk.W+tk.E)
-        self.e_end_time = tk.Entry(fr_form)
+        self.e_end_time = tk.Entry(fr_form, font=default_font)
         self.e_end_time.grid(row=4, column=1, sticky=tk.W+tk.E)
 
         tk.Button(fr_form, text='OK', command=self.create_event, font=default_font).grid(row=5, sticky=tk.W)
         tk.Button(fr_form, text='Refresh', command=self.update_event, font=default_font).grid(row=5, column=1, sticky=tk.E)
 
         tk.Label(fr_notes, text='Please note: ', font=default_font).grid(row=0, column=0, sticky=tk.W+tk.N)
-        tk.Label(fr_notes, text='* These fields are REQUIRED\n\'Start\' and \'End\' are optional', font=default_font).grid(row=0, column=1, sticky=tk.W)
+        tk.Label(fr_notes, text='* These fields are REQUIRED\n \'Start\' and \'End\' are optional', font=default_font).grid(row=0, column=1, sticky=tk.W)
 
         # ---------------------------------------------------------------------------
         # Google Calendar object
@@ -166,7 +168,8 @@ class Window(tk.Frame):
             end = e['end'].get('dateTime', e['end'].get('date'))
             s = start + '\t' + end + '\t' + e['summary']
             # print(s)
-            if start[0:10] == self.new_today[0:10]:
+            # Format is XXXX-XX-XX (Year-Month-Day)
+            if start[0:10] == '2019-05-08': # self.new_today[0:10]:
                 self.lb_today.insert(tk.END, self.get_start_time2(s) + ' - ' + self.get_end_time2(s) + ': ' + e['summary'])
                 self.write_file.write(s + '\n')
 
@@ -181,37 +184,51 @@ class Window(tk.Frame):
             if s_st_time != "":
                 if s_end_time != "":
                     self.lb_tasks.insert(tk.END, '{}: {} (Tag: {}) Start time: {}   End time: {}'.format(s_type, s_task, s_tags, s_st_time, s_end_time))
-                    self.send_line = self.time_template(s_st_time) + '\t' + self.time_template(s_end_time) + '\t' + '{} (Tag: {}) \n'.format(s_task, s_tags)
+                    self.send_line = self.time_template(s_st_time) + '\t' + self.time_template(s_end_time) + '\t' + '{}\t(Tag: {}) \n'.format(s_task, s_tags)
                 else:
                     self.lb_tasks.insert(tk.END, '{}: {} (Tag: {}) Start time: {}'.format(s_type, s_task, s_tags, s_st_time))
-                    self.send_line = self.time_template(s_st_time) + '\t' + self.new_today + '\t' + '{} (Tag: {}) \n'.format(s_task, s_tags)
+                    self.send_line = self.time_template(s_st_time) + '\t' + self.default_today + '\t' + '{}\t(Tag: {}) \n'.format(s_task, s_tags)
             else:
                 if s_end_time != "":
                     self.lb_tasks.insert(tk.END, '{}: {} (Tag: {}) End time: {}'.format(s_type, s_task, s_tags, s_end_time))
-                    self.send_line = self.new_today + '\t' + self.time_template(s_end_time) + '\t' + '{} (Tag: {}) \n'.format(s_task, s_tags)
+                    self.send_line = self.default_today + '\t' + self.time_template(s_end_time) + '\t' + '{}\t(Tag: {}) \n'.format(s_task, s_tags)
                 else:
                     self.lb_tasks.insert(tk.END, '{}: {} (Tag: {})'.format(s_type, s_task, s_tags))
-                    self.send_line = self.new_today + '\t' + self.new_today + '\t' + '{} (Tag: {}) \n'.format(s_task, s_tags)
+                    self.send_line = self.default_today + '\t' + self.default_today + '\t' + '{}\t(Tag: {}) \n'.format(s_task, s_tags)
         else:
             s_tags = "#reminder " + self.e_tags.get()
             if s_st_time != "":
                 if s_end_time != "":
                     self.lb_tasks.insert(tk.END, '{}: {} (Tag: {}) Start time: {}   End time: {}'.format(s_type, s_task, s_tags, s_st_time, s_end_time))
-                    self.send_line = self.time_template(s_st_time) + '\t' + self.time_template(s_end_time) + '\t' + '{} (Tag: {}) \n'.format(s_task, s_tags)
+                    self.send_line = self.time_template(s_st_time) + '\t' + self.time_template(s_end_time) + '\t' + '{}\t(Tag: {}) \n'.format(s_task, s_tags)
                 else:
                     self.lb_tasks.insert(tk.END, '{}: {} (Tag: {}) Start time: {}'.format(s_type, s_task, s_tags, s_st_time))
-                    self.send_line = self.time_template(s_st_time) + '\t' + self.new_today + '\t' + '{} (Tag: {}) \n'.format(s_task, s_tags)
+                    self.send_line = self.time_template(s_st_time) + '\t' + self.default_today + '\t' + '{}\t(Tag: {}) \n'.format(s_task, s_tags)
             else:
                 if s_end_time != "":
                     self.lb_tasks.insert(tk.END, '{}: {} (Tag: {}) End time: {}'.format(s_type, s_task, s_tags, s_end_time))
-                    self.send_line = self.new_today + '\t' + self.time_template(s_end_time) + '\t' + '{} (Tag: {}) \n'.format(s_task, s_tags)
+                    self.send_line = self.default_today + '\t' + self.time_template(s_end_time) + '\t' + '{}\t(Tag: {}) \n'.format(s_task, s_tags)
                 else:
                     self.lb_tasks.insert(tk.END, '{}: {} (Tag: {})'.format(s_type, s_task, s_tags))
-                    self.send_line = self.new_today + '\t' + self.new_today + '\t' + '{} (Tag: {}) \n'.format(s_task, s_tags)
+                    self.send_line = self.default_today + '\t' + self.default_today + '\t' + '{}\t(Tag: {}) \n'.format(s_task, s_tags)
         self.write_file.write(self.send_line)
         self.clear_text()
 
     def update_event(self):
+        __location__ = os.path.realpath(os.path.join(os.getcwd(), os.path.dirname(__file__)))
+        # f = open(os.path.join(__location__, 'Makefile'))
+        print(__location__)
+        os.system("ls")
+        print("ls")
+        os.system("make all")
+        time.sleep(2)
+        print("make all")
+        os.system("make run")
+        time.sleep(2)
+        print("make run")
+        os.system("make clean")
+        time.sleep(2)
+        print("make clean")
         read_file = open("file2.txt", "r")
         self.delete_event()
         temp = read_file.readlines()
