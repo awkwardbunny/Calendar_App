@@ -1,108 +1,64 @@
-//Class Task
+//Class Event
 
-#include <iostream>
-#include <string>
-#include <vector>
+#include "Event.hpp"
 
-using namespace std;
-
-class Event 
+Event::Event(string s) : Reminder(s, "event")
 {
-	string name;
-	vector <string> tags;
-	int date;									//YYYYMMDD
-	int start;				
-	int end;				
-
-public:
-	//constructor, takes in file line
-	//currently assumes all information available
-	Event(string s)
-	{
-		setDate(readDate(s));			
-		setStart(readTime(s.substr(11, 8)));					
-		setEnd(readTime(s.substr(37, 8)));					
-		setName(readName(s));		
-		setTags(readTags(s));			
-	}
-
-	//copy constructor
-	Event(Task &t)
-	{
-		name = t.getName();
-		tags = t.getTags();
-		date = t.getDate();						
-		start = t.getStart();				//change dep on algorithm
-		end = t.getEnd();					//change dep on algorithm
-	}
-
+	start = readTime(s.substr(11, 8));					
+	end = readTime(s.substr(37, 8));
+	setTags(readTags(s));							
 }
-	//get functions
-	string getName()
-	{
-		return name;
-	}
 
-	string getTags()
+//get functions
+string Event::getTags()
+{
+	string s = "";
+	for(int i = 0; i < tags.size(); i++)
 	{
-		for(auto it=tags.begin(); it!=tags.end(); ++it)
-    	{
-        	string += it->getInfo() + '\n';
-    	}
-	}
-
-	string getInfo()
-	{
-		return dateCat(date) + "T" + timeCat(start) + "\t" + dateCat(date) + "T" + timeCat(end)+ "\t" + name + "\t#" + getTags();
-	}
-
-	//set functions
-	void setName(string n)
-	{
-		name = n;
-	}
-
-	void setTags(string t)						//tags separated by commas
-	{
-		string temp = "";
-		int i = 0;
-		int j = 0;
-		
-		while(t[i] != '\0')
+		s += tags[i];
+		if(tags[i] != tags.at(tags.size() - 1))
 		{
-			while(t[i] == ' ')					//skips unnecess
-
-				ary spaces
-			{
-				i++; 
-			}
-			while(t[i] != ',')					//find tag
-			{
-				temp[j] += t[i];
-				i++;
-				j++;
-			}
-			tags.push_back(temp);				//add tag, reset temp and temp index
-			temp = "";
-			i = 0;
+			s += ", ";
 		}
 	}
 
-	int setDate(int d)
-	{
-		date = d;
-	}
+	return "#" + s;
+}
 
-	int setStart(int s)
-	{
-		start = s;
-	}
+string Event::getInfo()
+{
+	return dateCat(date) + "T" + timeCat(start) + "\t" + dateCat(date) + "T" + timeCat(end)+ "\t" + name + "\t#" + getTags();
+}
 
-	int setEnd(int e)
+//TODO
+//set functions
+void Event::setTags(string t)						//tags separated by commas
+{
+	string temp = "";
+	int i = 0;
+	int j = 0;
+	
+	while(t[i] != '\0')
 	{
-		end = e;
+		while(t[i] == ' ')					//skips unnecessary spaces
+		{
+			i++; 
+		}
+		while(t[i] != ',')					//find tag
+		{
+			temp[j] += t[i];
+			i++;
+			j++;
+		}
+		if(temp != "event")
+		{
+			tags.push_back(temp);				//add tag if not "event"
+		}
+		temp = "";
+		i++;
+		j = 0;
 	}
-};
+}
 
 
 

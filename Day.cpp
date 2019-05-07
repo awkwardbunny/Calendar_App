@@ -1,43 +1,44 @@
-#include <iostream>
-#include <string>
-#include <vector>
-#include "Event.cpp"
+//class Day
 
-class Day
+#include "Day.hpp"
+
+using namespace std;
+
+
+Day::Day(string s)
 {
-	int date;						//YYMMDD
-	vector <Event> events;
-	vector <Reminder> reminders		
+	dayDate = readDate(s);
+	add(s);
+}
 
-public:
-	//constructor
-	Day(int d) : date(d){}
-
-	//copy constructor
-	Day(Day &d)
+//returns formatted day schedule
+string Day::getSched()
+{
+	string sched = "";
+	for (auto it=events.begin(); it!=events.end(); ++it)
 	{
-		tasks = d.getTasks();
+    	sched += it->getInfo() + '\n';
 	}
 
-	//destructor
-	~Day(){}
-
-	//returns formatted day schedule
-	string getSched()
+	sched = "";
+	for (auto it=reminders.begin(); it!=reminders.end(); ++it)
 	{
-		string sched = "";
-		for (auto it=intVector.begin(); it!=intVector.end(); ++it)
-    	{
-        	string += it->getInfo() + '\n';
-    	}
+    	sched += it->getInfo() + '\n';
 	}
 
-	//determines reminder or Event, adds to appropriate vector
-	void add(string s)
+}
+
+//determines reminder or Event, adds to appropriate vector
+void Day::add(string s)
+{
+	if(readTags(s).find("event"))
 	{
-		if(s.find("#event"))
-		{
-			events.push_back()
-		}
+		Event e(s);
+		events.push_back(e);
 	}
-};
+	else if(readTags(s).find("reminder"))
+	{
+		Reminder r(s, s); // TODO Fix
+		reminders.push_back(r);
+	}
+}

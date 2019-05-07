@@ -1,81 +1,50 @@
+//class Calendar
 
+#include "Calendar.hpp"
 
-
-
-
-
-
-				myfile << (it->second).getSched() << endl;	//print each day's schedule
-				return 1;
-			if(it-> first == d)
-			{
-			{
-			}
-			}
-		for (auto it=dayMap.begin(); it!=dayMap.end(); ++it)
-		fstream myfile ("input.txt");
-		fstream myfile ("output.txt");
-		if(myfile.is_open())							//checks file open
-		if(myfile.is_open())							//checks file open
-		int tempDate;
-		iterator it;
-		ppp08
-		return 0;
-		writeOutput();
-		{
-		}
-	//reads input.txt
-	Calendar()
-	int contains(int d)								//returns 1 if day already in dayMap, 0 if not
-	map<int, Day> dayMap;
-	void readInput()
-	void writeOutput()
-	{
-	{
-	{
-	{
-	{
-	}
-	}
-	}
-	}
-	}
-	~Calendar()
-  			cout << "Unable to open file" << endl;	//error message
-  			cout << "Unable to open file"; 				//error message
-  		else 
-  		else 
-  		{
-  		{
-  		{
-  		{
-  		}
-  		}
-  		}
-  		}
-    				(dayMap.find(tempDate)->second).add(line);
-    				dayMap[tempDate] = Day(tempDay);	//add new Day to daze
-    				tempDay = line;
-    			else									//if new date
-    			if(it != dayMap.end())			//if repeating date
-    			it = dayMap.find(dayMap.begin(), dayMap.end(), tempDate)
-    			tempDate = readDate(line);
-    			{
-    			{
-    			}
-    			}
-    		for (auto it=dayMap.begin(); it!=dayMap.end(); ++it)
-    		myfile.close();								//closes file
-    		myfile.close();							//close file
-    		while(getline(myfile, line) )				//returns reference to line, false if EOF or error
-    		{
-#include "Day.cpp"
-#include "sorters.cpp"
-#include <iostream>
-#include <map>
-#include <string>
-class Calendar
-public: 
 using namespace std;
+
+void Calendar::readInput()
 {
-};
+	int tempDate;
+	fstream myfile ("input.txt");
+	string line;
+	if(myfile.is_open())						//checks file open
+	{
+		while(getline(myfile, line) )			//returns reference to line, false if EOF or error
+		{
+			tempDate = readDate(line);
+			printf("")
+			// if(!dayMap.contains(tempDate))				//if not repeating date
+			// {
+			// 	dayMap[tempDate] = Day(line);	//add new Day to daze
+			// }
+			// else
+			// {
+			// 	dayMap.find(tempDate) -> second.add(line);
+			// }
+		}
+	myfile.close();								//closes file
+	}
+	else 
+	{
+		cout << "Unable to open file"; 			//error message
+	}
+}
+
+void Calendar::writeOutput()
+{
+	fstream myfile ("output.txt");
+	if(myfile.is_open())						//checks file open
+	{
+		for (auto it=dayMap.begin(); it!=dayMap.end(); ++it)
+		{
+			myfile << (it->second).getSched() << endl;	//print each day's schedule
+		}
+		myfile.close();							//close file
+	}
+	else 
+	{
+		cout << "Unable to open file" << endl;	//error message
+	}
+}
