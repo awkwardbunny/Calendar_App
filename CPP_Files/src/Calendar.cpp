@@ -36,10 +36,9 @@ void Calendar::writeOutput()
 	ofstream myfile ("output.txt");
 	if(myfile.is_open())						//checks file open
 	{
-		myfile << "Test line! :)" << endl;
 		for (auto it=dayMap.begin(); it!=dayMap.end(); ++it)
 		{
-			cout << (it->second).getSched() << endl;	//print each day's schedule
+			myfile << (it->second).getSched() << endl;	//print each day's schedule
 		}
 		myfile.close();							//close file
 	}
