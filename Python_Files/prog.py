@@ -151,7 +151,8 @@ class Window(tk.Frame):
         tk.Button(fr_form, text='OK', command=self.create_event, font=default_font).grid(row=5, sticky=tk.W)
         tk.Button(fr_form, text='Refresh', command=self.update_event, font=default_font).grid(row=5, column=1, sticky=tk.E)
 
-        tk.Label(fr_notes, text='Please note: ', font=default_font).grid(row=0, column=0, sticky=tk.W)
+        tk.Label(fr_notes, text='Please note: ', font=default_font).grid(row=0, column=0, sticky=tk.W+tk.N)
+        tk.Label(fr_notes, text='* These fields are REQUIRED\n\'Start\' and \'End\' are optional', font=default_font).grid(row=0, column=1, sticky=tk.W)
 
         # ---------------------------------------------------------------------------
         # Google Calendar object
@@ -166,7 +167,7 @@ class Window(tk.Frame):
             s = start + '\t' + end + '\t' + e['summary']
             # print(s)
             if start[0:10] == self.new_today[0:10]:
-                self.lb_today.insert(tk.END, e['summary'])
+                self.lb_today.insert(tk.END, self.get_start_time2(s) + ' - ' + self.get_end_time2(s) + ': ' + e['summary'])
                 self.write_file.write(s + '\n')
 
     def create_event(self):     # from User Input
@@ -176,7 +177,7 @@ class Window(tk.Frame):
         s_end_time = self.e_end_time.get()
         self.send_line = ""
         if s_type == "Event":
-            s_tags = "#Event " + self.e_tags.get()
+            s_tags = "#event " + self.e_tags.get()
             if s_st_time != "":
                 if s_end_time != "":
                     self.lb_tasks.insert(tk.END, '{}: {} (Tag: {}) Start time: {}   End time: {}'.format(s_type, s_task, s_tags, s_st_time, s_end_time))
@@ -192,7 +193,7 @@ class Window(tk.Frame):
                     self.lb_tasks.insert(tk.END, '{}: {} (Tag: {})'.format(s_type, s_task, s_tags))
                     self.send_line = self.new_today + '\t' + self.new_today + '\t' + '{} (Tag: {}) \n'.format(s_task, s_tags)
         else:
-            s_tags = "#Reminder " + self.e_tags.get()
+            s_tags = "#reminder " + self.e_tags.get()
             if s_st_time != "":
                 if s_end_time != "":
                     self.lb_tasks.insert(tk.END, '{}: {} (Tag: {}) Start time: {}   End time: {}'.format(s_type, s_task, s_tags, s_st_time, s_end_time))
@@ -208,18 +209,18 @@ class Window(tk.Frame):
                     self.lb_tasks.insert(tk.END, '{}: {} (Tag: {})'.format(s_type, s_task, s_tags))
                     self.send_line = self.new_today + '\t' + self.new_today + '\t' + '{} (Tag: {}) \n'.format(s_task, s_tags)
         self.write_file.write(self.send_line)
+        self.clear_text()
 
     def update_event(self):
         read_file = open("file2.txt", "r")
         self.delete_event()
         temp = read_file.readlines()
         for x in temp:
-            start_time = self.get_start_time(x)
-            end_time = self.get_end_time(x)
+            start_time = self.get_start_time2(x)
+            end_time = self.get_end_time2(x)
             event_name = self.get_event_name(x)
-            returnable = event_name + '\n' + start_time + '\n' + end_time
+            returnable = start_time + ' - ' + end_time + ': ' + event_name
             self.lb_today.insert(tk.END, returnable)
-        # print("Do something 1")
 
     def delete_event(self):
         for i in range(self.lb_today.size()):
@@ -232,17 +233,24 @@ class Window(tk.Frame):
     def get_end_time(self, time_string):
         return time_string[37:45]
 
+    def get_start_time2(self, time_string):
+        return time_string[11:16]
+
+    def get_end_time2(self, time_string):
+        return time_string[37:42]
+
     def get_event_name(self, time_string):
         return time_string[52:len(time_string)-1]
 
-    def file_length(self, fname):
-        with open(fname) as f:
-            for i, l in enumerate(f):
-                pass
-        return i + 1
-
     def time_template(self, time_string):
         return self.today.strftime("%Y-%m-%dT" + time_string + ":00-04:00")
+
+    def clear_text(self):
+        self.type_input.set("")
+        self.e_task_name.delete(0, 'end')
+        self.e_tags.delete(0, 'end')
+        self.e_st_time.delete(0, 'end')
+        self.e_end_time.delete(0, 'end')
 
 def main():
     root = tk.Tk()
