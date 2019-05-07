@@ -1,2 +1,3 @@
 *.o
 CPP_Files/main
+CPP_Files/output.txt
