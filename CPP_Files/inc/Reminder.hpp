@@ -11,7 +11,7 @@ using namespace std;
 class Reminder
 {
 public:
-	Reminder(string, string);
+	Reminder(string s);
 	int date;									//YYYYMMDD				
 	string name;
 	vector <string> tags;

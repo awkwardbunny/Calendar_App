@@ -4,11 +4,11 @@
 
 //constructor, takes in file line
 //currently assumes all information available
-Reminder::Reminder(string s, string t = "reminder")
+Reminder::Reminder(string s)
 {
 	date = readDate(s);							
 	name = readName(s);
-	tags.push_back(t);					
+	tags.push_back(readTags(s));
 }
 
 //get functions
@@ -19,12 +19,18 @@ string Reminder::getName()
 
 string Reminder::getTags()
 {
-	return "#" + tags[0];
+	string s = "#";
+	for(int i = 0; i < tags.size(); i++)
+	{
+		s += tags[i];
+	}
+
+	return "(Tag: " + s + ")";
 }
 
 string Reminder::getInfo()
 {
-	return dateCat(date) + "\t" + dateCat(date) + "\t" + name + "\t#" + getTags();
+	return dateCat(date) + "T00:00:00-04:00\t" + dateCat(date) + "T00:00:00-04:00\t" + name + "\t " + getTags();
 }
 
 //set tags
@@ -40,16 +46,11 @@ void Reminder::setTags(string t)						//tags separated by commas
 		{
 			i++; 
 		}
-		while(t[i] != ',')					//find tag
+		while(t[i] != '#')					//find tag
 		{
-			temp[j] += t[i];
-			i++;
-			j++;
+			temp[j++] += t[i++];
 		}
-		if(temp != "event" && temp !="reminder")
-		{
-			tags.push_back(temp);				//add tag
-		}
+		tags.push_back(temp);
 		temp = "";
 		i++;
 		j = 0;

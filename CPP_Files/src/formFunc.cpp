@@ -7,7 +7,6 @@ using namespace std;
 //reads the date that the file represents
 int readDate(string s)
 {
-	//cout << "IN readDate(): Input is " << s << endl;
 	string temp = ""; //init and declare helper vars
 	int i = 0;
 
@@ -37,7 +36,7 @@ string readName(string s)
 {
 	string temp = "";
 	int i = 52;
-	while(s[i] != '\t')
+	while(i < s.length() && s[i] != '\t')
 	{
 		temp += s[i];
 		i++;
@@ -48,12 +47,19 @@ string readName(string s)
 string readTags(string s)
 {
 	string temp = "";
-	int i = s.length() - 1;
-	while(s[i] != '#')
+	int i;
+	if(s.find("Tag: ") == std::string::npos)
 	{
-		temp = s[i--] + temp;
+		return "Google event";
+	}
+	i = (s.find("Tag: ")) + 6;
+	while(s[i] != ')')
+	{
+		temp += s[i++];
 	}
 	return temp;
+
+	//s.substr(s.find("Tag: ") + 6, s.length() - s.find("Tag: ") +9);
 }
 
 //concatenates int into ##:##:##
@@ -64,7 +70,6 @@ string timeCat(int t)
 	{
 		s = "0" + s;
 	}
-
 	return s.substr(0, 2) + ":" + s.substr(2, 2) + ":" + s.substr(4, 2);
 }
 
@@ -72,6 +77,6 @@ string timeCat(int t)
 string dateCat(int d)
 {
 	string s = to_string(d);
-
-	return s.substr(0, 4) + "/" + s.substr(4, 2) + "/" + s.substr(6, 2);
+	return s.substr(0, 4) + "-" + s.substr(4, 2) + "-" + s.substr(6, 2);
 }
+

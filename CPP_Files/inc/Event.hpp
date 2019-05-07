@@ -13,13 +13,11 @@ using namespace std;
 class Event : public Reminder
 {
 public:
-	Event(string);
+	Event(string s);
 	int start;				
 	int end;
 
-	string getTags();
 	string getInfo();
-	void setTags(string t);	//tags separated by commas
 };
 
 #endif
